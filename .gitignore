@@ -1,2 +1,8 @@
 
 *.orig
+*.crf
+*.o
+*.dep
+*.htm
+*.d
+*.sct

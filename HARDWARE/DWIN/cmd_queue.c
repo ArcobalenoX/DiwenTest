@@ -72,16 +72,22 @@ u16 queue_find_cmd(u8 *buffer, u16 buf_len)
         {
             continue;
         }
-        if(cmd_pos == 1 && _data != CMD_HEAD2)                         //指令第一个字节必须是帧头，否则跳过
-        {
-            cmd_pos = 0;
-            continue;
-        }
+
         if(cmd_pos < buf_len)                                         //防止缓冲区溢出
             buffer[cmd_pos++] = _data;
 
+				/*
+        if(cmd_pos == 1 && _data != CMD_HEAD2)                         
+        {
+            cmd_pos = 0;
+            continue;
+        }				
+				*/
+				
+				
         if(buffer[3] == cmd_pos - 1 )																		//指令结束
         {
+						cmd_size= cmd_pos;
             return cmd_size;				//指令字节长度
         }
 

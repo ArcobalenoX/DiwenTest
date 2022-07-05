@@ -81,14 +81,14 @@ void write_to_dwin(u8 addr_h, u8 addr_l, u8 value_h, u8 value_l)
     sendArray(write_cmd, sizeof(write_cmd));
 }
 
-void writeu8_to_dwin(u16 addr, u8 data)
+void write_u8_to_dwin(u16 addr, u8 data)
 {
     short_char_union m;
     m.shortdata = addr;
     write_to_dwin(m.chardata[1], m.chardata[0], 0x00, data);
 }
 
-void writeu16_to_dwin(u16 addr, u16 data)
+void write_u16_to_dwin(u16 addr, u16 data)
 {
     short_char_union m;
     m.shortdata = addr;
@@ -97,7 +97,7 @@ void writeu16_to_dwin(u16 addr, u16 data)
     write_to_dwin(m.chardata[1], m.chardata[0], n.chardata[1], n.chardata[0]);
 }
 
-void writeu32_to_dwin(u16 addr, u32 data)
+void write_u32_to_dwin(u16 addr, u32 data)
 {
     short_char_union m;
     m.shortdata = addr;
@@ -117,6 +117,47 @@ void write_float_to_dwin(u16 addr, float data)
     sendArray(write_cmd, sizeof(write_cmd));
 }
 
+/************************************************************************************
+* @name		:	read_from_dwin
+* @brief	:	发送从迪文屏读数据的指令
+* @param	: addr_h 变量地址高字节
+						addr_l 变量地址低字节
+						size 数据大小(单位：字/两字节/16位)
+* @retval	:
+************************************************************************************/
+void read_from_dwin(u8 addr_h, u8 addr_l, u8 size)
+{
+    u8 read_cmd[7] = {0x5A, 0xA5, 0x04, 0x83, addr_h, addr_l, size};
+    sendArray(read_cmd, sizeof(read_cmd));
+}
+
+void read_u8_from_dwin(u16 addr)
+{
+    short_char_union m;
+    m.shortdata = addr;
+    read_from_dwin(m.chardata[1], m.chardata[0], 0x01);
+}
+
+void read_u16_from_dwin(u16 addr)
+{
+    short_char_union m;
+    m.shortdata = addr;
+    read_from_dwin(m.chardata[1], m.chardata[0], 0x01);
+}
+void read_u32_from_dwin(u16 addr)
+{
+    short_char_union m;
+    m.shortdata = addr;
+    read_from_dwin(m.chardata[1], m.chardata[0], 0x02);
+}
+
+void read_float_from_dwin(u16 addr)
+{
+    short_char_union m;
+    m.shortdata = addr;
+    read_from_dwin(m.chardata[1], m.chardata[0], 0x02);
+}
+
 
 
 /*!
@@ -124,8 +165,10 @@ void write_float_to_dwin(u16 addr, float data)
 *  \param msg 待处理消息
 *  \param size 消息长度
 */
-void ProcessMessage(CTRL_MSG *msg, u16 size )
+void ProcessMessage(CTRL_MSG *msg)
 {
+    static u8 Flag = 0;
+
     u8 cmd_type = msg->cmd_type;                 	//命令类型(0x83)
     u8 addr_h   = msg->addr_h;										//变量高地址
     u8 addr_l   = msg->addr_l;										//变量低地址
@@ -133,14 +176,17 @@ void ProcessMessage(CTRL_MSG *msg, u16 size )
 
     u16 addr = (addr_h << 8) + (addr_l);
 
+    u8 data8 = 0;
+    u16 data16 = 0;
+    u32 data32 = 0;
+
     if(data_len == 1)
     {
-        u8 data8 = msg->data[0];
+        data8 = msg->data[0];
         printf("recv data %d\r\n", data8);
     }
     else if(data_len == 2)
     {
-        u16 data16 = 0;
         short_char_union m;
         m.chardata[1] = msg->data[0];
         m.chardata[0] = msg->data[1];
@@ -149,7 +195,6 @@ void ProcessMessage(CTRL_MSG *msg, u16 size )
     }
     else if(data_len == 4)
     {
-        u32 data32 = 0;
         int_char_union n;
         n.chardata[3] = msg->data[0];
         n.chardata[2] = msg->data[1];
@@ -161,9 +206,25 @@ void ProcessMessage(CTRL_MSG *msg, u16 size )
 
     switch(addr)
     {
-    case TEST_BTN_ADDR:                                                        //触摸屏按下
+    case TEST_BTN_ADDR:
+
+        //触摸屏按下
         printf("recv over\r\n");
-        writeu16_to_dwin(TEST_TEXT_ADDR, TEST_BTN_ADDR);
+
+        if(Flag)
+        {
+            write_u8_to_dwin(TEST_LED_ADDR, Flag);
+            Flag = 0;
+        }
+        else
+        {
+            write_u8_to_dwin(TEST_LED_ADDR, Flag);
+            Flag = 1;
+        }
+        break;
+
+    case TEST_NUMBER_ADDR:
+        write_u16_to_dwin(TEST_TEXT_ADDR, data16);
         break;
 
 
@@ -181,7 +242,7 @@ void dwin_ack(void)
     size = queue_find_cmd(cmd_buffer, CMD_MAX_SIZE);                             //从缓冲区中获取一条指令
     if(size > 0)                                   //接收到指令
     {
-        ProcessMessage((CTRL_MSG*)cmd_buffer, size);                             //指令处理
+        ProcessMessage((CTRL_MSG*)cmd_buffer);                             //指令处理
     }
 }
 

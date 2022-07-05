@@ -4,8 +4,19 @@
 #include "cmd_queue.h"
 #include "usart.h"
 
-#define TEST_BTN_ADDR 0x5000		//输入按键
-#define TEST_TEXT_ADDR 0x5002		//显示数字
+
+
+#define TEST_BTN_ADDR 0x5000		//点击按键
+#define TEST_LED_ADDR 0x5002		//指示按键
+
+
+#define TEST_TEXT_ADDR 0x5004			//显示数字
+#define TEST_NUMBER_ADDR 0x5006		//输入数字
+
+
+
+
+
 
 #define CMD_MAX_SIZE 16         // 单条指令大小，根据需要调整，尽量设置大一些
 
@@ -60,6 +71,13 @@ void SendChar(u8 t);
 void sendArray(void * buf, u8 len);
 
 
+/************************************************************************************
+* @name		:	write_to_dwin
+* @brief	:	发送向迪文屏写数据的指令
+* @param	: addr 变量地址
+						value/data 数据
+* @retval	:
+************************************************************************************/
 /*
 写变量存储器指令指令（0x82） 此处以向 1000 变量地址里写数值 2 为例： 5AA5 05 82 1000 0002
 5AA5 表示：帧头
@@ -75,12 +93,21 @@ c: 5A A5 07 82 1001 000A 000B
 */
 
 void write_to_dwin(u8 addr_h, u8 addr_l, u8 value_h, u8 value_l);
-void writeu8_to_dwin(u16 addr, u8 data);
-void writeu16_to_dwin(u16 addr, u16 data);
-void writeu32_to_dwin(u16 addr, u32 data);
+void write_u8_to_dwin(u16 addr, u8 data);
+void write_u16_to_dwin(u16 addr, u16 data);
+void write_u32_to_dwin(u16 addr, u32 data);
 void write_float_to_dwin(u16 addr, float data);
 
 
+
+
+
+/************************************************************************************
+* @name		:	read_from_dwin
+* @brief	:	发送从迪文屏读数据的指令
+* @param	: addr 变量地址
+* @retval	:
+************************************************************************************/
 /*
 读变量存储器指令指令（0x83） 此处以读 1000 变量地址里的数值（假设当前数值为 2）为例： 5AA5 04 83 1000 01
 5AA5 表示：帧头
@@ -95,7 +122,23 @@ void write_float_to_dwin(u16 addr, float data);
 01 表示：从 1000 地址开始读 1 个字长度数据
 00 02 表示：1000 地址里的数据值是 2
 */
-void ProcessMessage( CTRL_MSG *msg, u16 size );
+
+
+void read_from_dwin(u8 addr_h, u8 addr_l, u8 size);
+void read_u8_from_dwin(u16 addr);
+void read_u16_from_dwin(u16 addr);
+void read_u32_from_dwin(u16 addr);
+void read_float_from_dwin(u16 addr);
+
+
+
+/************************************************************************************
+* @name		:	ProcessMessage
+* @brief	:	处理迪文屏返回的数据
+* @param	: 
+* @retval	:
+************************************************************************************/
+void ProcessMessage( CTRL_MSG *msg);
 void dwin_ack(void);
 
 

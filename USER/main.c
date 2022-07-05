@@ -99,9 +99,8 @@ void dwin_task(void *pvParameters)
 {
     while(1)
     {
-				dwin_ack();
-
-        vTaskDelay(20);      //延时20ms，也就是10个时钟节拍
+				dwin_ack();						//接收处理	
+        vTaskDelay(20);      //延时20ms
     }
 }
 
@@ -109,10 +108,15 @@ void dwin_task(void *pvParameters)
 //调试函数
 void debug_task(void *pvParameters)
 {
-
+		static u32 cnt=0;
     while(1)
     {
-        vTaskDelay(10);      //延时10ms，也就是10个时钟节拍
+
+				if(cnt%100==0)
+				{
+					read_u16_from_dwin(TEST_NUMBER_ADDR);
+				}
+        vTaskDelay(10);      //延时10ms
     }
 }
 
