@@ -7,12 +7,14 @@
 #include "key.h"
 #include "beep.h"
 #include "string.h"
+
 #include "malloc.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
-#include "dwin.h"
 
+#include "dwin.h"
+#include "dwin_test.h"
 
 
 
@@ -56,7 +58,7 @@ int main(void)
     DwinUartInit(115200);
     //清空串口接收缓冲区
     queue_reset();
-    //延时等待串口屏初始化完毕,必须等待300ms
+    //延时等待串口屏初始化完毕,适当等待300ms
     delay_ms(300);
 
 

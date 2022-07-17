@@ -38,6 +38,6 @@ u16 queue_find_cmd(u8 *cmd,u16 buf_len);
 *  \param  len 待校验数据长度
 *  \return  校验码
 */
-uint16_t CRC16_Check(uint8_t *str, uint8_t len);
+u16 CRC16_Check(u8 *str, u8 len);
 
 #endif

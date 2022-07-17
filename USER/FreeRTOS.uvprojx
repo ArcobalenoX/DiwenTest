@@ -444,6 +444,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\DWIN\cmd_queue.c</FilePath>
             </File>
+            <File>
+              <FileName>dwin_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\DWIN\dwin_test.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

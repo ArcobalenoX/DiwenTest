@@ -88,7 +88,7 @@ u16 queue_find_cmd(u8 *buffer, u16 buf_len)
 #if CRC16_ENABLE
         if(buffer[2] == cmd_pos - 3 )					/ 指令结束
         {
-            uint16_t crc = 0;
+            u16 crc = 0;
             crc = CRC16_Check(buffer, buffer[2]);
 
             if(crc != buffer[cmd_pos - 2] << 8 + buffer[cmd_pos - 1])
@@ -114,7 +114,7 @@ u16 queue_find_cmd(u8 *buffer, u16 buf_len)
 }
 
 
-static const uint8_t CRCTABH[256] = {
+static const u8 CRCTABH[256] = {
     0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0,
     0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
     0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0,
@@ -143,7 +143,7 @@ static const uint8_t CRCTABH[256] = {
     0x80, 0x41, 0x00, 0xC1, 0x81, 0x40
 };
 
-static const uint8_t CRCTABL[256] = {
+static const u8 CRCTABL[256] = {
     0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06,
     0x07, 0xC7, 0x05, 0xC5, 0xC4, 0x04, 0xCC, 0x0C, 0x0D, 0xCD,
     0x0F, 0xCF, 0xCE, 0x0E, 0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09,
@@ -177,24 +177,24 @@ static const uint8_t CRCTABL[256] = {
 /*
 * 函数名：CRC16_Check
 * 描  述：CRC16校验函数
-				uint8_t TestBuf[8]={0x5A,0xA5,0x05,0x81,0x00,0x01,,0x00,0x00};
+				u8 TestBuf[8]={0x5A,0xA5,0x05,0x81,0x00,0x01,,0x00,0x00};
 				比如要发送这个字符串，
 				0x5A,0xA5帧头
 				0x05:操作指令（0x81）+数据（0x00，0x01）+校验值（0x00，0x00）
 				使用：TestBuf[2]为要校验的长度，-2是减去校验值的两个字节
 							只校验指令+数据
-				TestBuf[6]=uint8_t(CRC16_Check(TestBuf,(TestBuf[2]-2))&0x00FF);//取低八位
-				TestBuf[7]=uint8_t(CRC16_Check(TestBuf,(TestBuf[2]-2))>>8);		 //取高八位
+				TestBuf[6]=u8(CRC16_Check(TestBuf,(TestBuf[2]-2))&0x00FF);//取低八位
+				TestBuf[7]=u8(CRC16_Check(TestBuf,(TestBuf[2]-2))>>8);		 //取高八位
 				迪文屏要求先发低再发高
 * 输  入：str - 要进行校验的数据
 *         len - 要校验的数据的字节数
 * 输  出：16位型校验值
 */
-uint16_t CRC16_Check(uint8_t *str, uint8_t len)
+u16 CRC16_Check(u8 *str, u8 len)
 {
-    uint8_t index, crch, crcl;
-    uint8_t i;
-    uint16_t crc;
+    u8 index, crch, crcl;
+    u8 i;
+    u16 crc;
 
     crch = 0xFF;
     crcl = 0xFF;
