@@ -1,17 +1,17 @@
 #include "dwin.h"
 
-u8  cmd_buffer[CMD_MAX_SIZE];   //Ö¸Áî»º´æ
+u8  cmd_buffer[CMD_MAX_SIZE];   //æŒ‡ä»¤ç¼“å­˜
 
 
-//´®¿Ú³õÊ¼»¯   BaudRate-²¨ÌØÂÊÉèÖÃ
+//ä¸²å£åˆå§‹åŒ–   BaudRate-æ³¢ç‰¹ç‡è®¾ç½®
 void DwinUartInit(u32 BaudRate)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);            // GPIOÊ±ÖÓÊ¹ÄÜ
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);            //USART2Ê±ÖÓÊ¹ÄÜ
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);            // GPIOæ—¶é’Ÿä½¿èƒ½
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);            //USART2æ—¶é’Ÿä½¿èƒ½
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -20,20 +20,20 @@ void DwinUartInit(u32 BaudRate)
     GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
     GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);         //PA2Òı½Å¸´ÓÃÎªUSART2TX
-    GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);         //PA3Òı½Å¸´ÓÃÎªUSART2RX
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_USART2);         //PA2å¼•è„šå¤ç”¨ä¸ºUSART2TX
+    GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2);         //PA3å¼•è„šå¤ç”¨ä¸ºUSART2RX
 
-    USART_InitStructure.USART_BaudRate = BaudRate;                   //²¨ÌØÂÊ
-    USART_InitStructure.USART_WordLength = USART_WordLength_8b;      //8¸öÊı¾İÎ»
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;           //1¸öÍ£Ö¹Î»
-    USART_InitStructure.USART_Parity = USART_Parity_No ;             //ÎŞÆæÅ¼Ğ£ÑéÎ»
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//¹Ø±ÕÓ²¼şÁ÷¿Ø
-    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;  //ÊÕ·¢Ä£Ê½
-    USART_Init(USART2, &USART_InitStructure);                         //³õÊ¼»¯USART2
+    USART_InitStructure.USART_BaudRate = BaudRate;                   //æ³¢ç‰¹ç‡
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;      //8ä¸ªæ•°æ®ä½
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;           //1ä¸ªåœæ­¢ä½
+    USART_InitStructure.USART_Parity = USART_Parity_No ;             //æ— å¥‡å¶æ ¡éªŒä½
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//å…³é—­ç¡¬ä»¶æµæ§
+    USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;  //æ”¶å‘æ¨¡å¼
+    USART_Init(USART2, &USART_InitStructure);                         //åˆå§‹åŒ–USART2
 
-    USART_Cmd(USART2, ENABLE);                                        //Ê¹ÄÜUSART2
+    USART_Cmd(USART2, ENABLE);                                        //ä½¿èƒ½USART2
     USART_ITConfig(USART2, USART_IT_PE, ENABLE);
-    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);                    //´ò¿ªUSART2µÄÖĞ¶Ï
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);                    //æ‰“å¼€USART2çš„ä¸­æ–­
     NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 5;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -41,14 +41,14 @@ void DwinUartInit(u32 BaudRate)
     NVIC_Init(&NVIC_InitStructure);
 }
 
-//·¢ËÍ×Ö½Ú¸ø´®¿Ú
+//å‘é€å­—èŠ‚ç»™ä¸²å£
 void  SendChar(u8 data)
 {
-    while(!(USART_GetFlagStatus(USART2, USART_FLAG_TC) == 1));         //µÈ´ı·¢ËÍÊı¾İÍê³É
-    USART_SendData(USART2, data); //½«Êı¾İĞ´ÈëÊı¾İ¼Ä´æÆ÷ÖĞ
+    while(!(USART_GetFlagStatus(USART2, USART_FLAG_TC) == 1));         //ç­‰å¾…å‘é€æ•°æ®å®Œæˆ
+    USART_SendData(USART2, data); //å°†æ•°æ®å†™å…¥æ•°æ®å¯„å­˜å™¨ä¸­
 }
 
-//·¢ËÍ×Ö½ÚÊı×é¸ø´®¿Ú
+//å‘é€å­—èŠ‚æ•°ç»„ç»™ä¸²å£
 void sendArray(void * buf, u8 len)
 {
     char *p = (char *)buf;
@@ -58,7 +58,7 @@ void sendArray(void * buf, u8 len)
         p++;
     }
 }
-//´®¿Ú½ÓÊÕÊı¾İ
+//ä¸²å£æ¥æ”¶æ•°æ®
 void USART2_IRQHandler(void)
 {
     while(USART_GetFlagStatus(USART2, USART_FLAG_RXNE) == 0);
@@ -68,17 +68,29 @@ void USART2_IRQHandler(void)
 
 /************************************************************************************
 * @name		:	write_to_dwin
-* @brief	:	´®¿ÚÏòµÏÎÄÆÁĞ´Êı¾İ
-* @param	: 	addr_h ±äÁ¿µØÖ·¸ß×Ö½Ú
-				addr_l ±äÁ¿µØÖ·µÍ×Ö½Ú
-				value_h ±äÁ¿Öµ¸ß×Ö½Ú
-				value_l ±äÁ¿ÖµµÍ×Ö½Ú
+* @brief	:	ä¸²å£å‘è¿ªæ–‡å±å†™æ•°æ®
+* @param	: 	addr_h å˜é‡åœ°å€é«˜å­—èŠ‚
+				addr_l å˜é‡åœ°å€ä½å­—èŠ‚
+				value_h å˜é‡å€¼é«˜å­—èŠ‚
+				value_l å˜é‡å€¼ä½å­—èŠ‚
 * @retval	:
 ************************************************************************************/
 void write_to_dwin(u8 addr_h, u8 addr_l, u8 value_h, u8 value_l)
 {
-    u8 write_cmd[8] = {0x5A, 0xA5, 0x05, 0x82, addr_h, addr_l, value_h, value_l};
-    sendArray(write_cmd, sizeof(write_cmd));
+
+#if CRC16_ENABLE
+    u8 cmd[10] = {0x5A, 0xA5, 0x07, 0x82, addr_h, addr_l, value_h, value_l, 0, 0};
+    u16 crc = CRC16_Check(cmd, cmd[2] - 2);
+    cmd[sizeof(cmd) - 2] = (crc >> 8);
+    cmd[sizeof(cmd) - 1] = crc & 0xff;
+    sendArray(cmd, sizeof(cmd));
+
+#elseif
+    u8 cmd[8] = {0x5A, 0xA5, 0x05, 0x82, addr_h, addr_l, value_h, value_l};
+    sendArray(cmd, sizeof(cmd));
+
+#endif
+
 }
 
 void write_u8_to_dwin(u16 addr, u8 data)
@@ -103,8 +115,20 @@ void write_u32_to_dwin(u16 addr, u32 data)
     m.shortdata = addr;
     int_char_union n;
     n.intdata = data;
-    u8 write_cmd[10] = {0x5A, 0xA5, 0x07, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0]};
-    sendArray(write_cmd, sizeof(write_cmd));
+
+#if CRC16_ENABLE
+    u8 cmd[12] = {0x5A, 0xA5, 0x09, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0], 0, 0};
+    u16 crc = CRC16_Check(cmd, cmd[2] - 2);
+    cmd[sizeof(cmd) - 2] = (crc >> 8);
+    cmd[sizeof(cmd) - 1] = crc & 0xff;
+    sendArray(cmd, sizeof(cmd));
+#elseif
+
+    u8 cmd[10] = {0x5A, 0xA5, 0x07, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0]};
+    sendArray(cmd, sizeof(cmd));
+
+#endif
+
 }
 
 void write_float_to_dwin(u16 addr, float data)
@@ -113,22 +137,44 @@ void write_float_to_dwin(u16 addr, float data)
     m.shortdata = addr;
     float_char_union n;
     n.floatdata = data;
-    u8 write_cmd[10] = {0x5A, 0xA5, 0x07, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0]};
-    sendArray(write_cmd, sizeof(write_cmd));
+
+#if CRC16_ENABLE
+    u8 cmd[12] = {0x5A, 0xA5, 0x09, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0], 0, 0};
+    u16 crc = CRC16_Check(cmd, cmd[2] - 2);
+    cmd[sizeof(cmd) - 2] = (crc >> 8);
+    cmd[sizeof(cmd) - 1] = crc & 0xff;
+    sendArray(cmd, sizeof(cmd));
+
+#elseif
+    u8 cmd[10] = {0x5A, 0xA5, 0x07, 0x82, m.chardata[1], m.chardata[0], n.chardata[3], n.chardata[2], n.chardata[1], n.chardata[0]};
+    sendArray(cmd, sizeof(cmd));
+
+#endif
 }
 
 /************************************************************************************
 * @name		:	read_from_dwin
-* @brief	:	·¢ËÍ´ÓµÏÎÄÆÁ¶ÁÊı¾İµÄÖ¸Áî
-* @param	: addr_h ±äÁ¿µØÖ·¸ß×Ö½Ú
-						addr_l ±äÁ¿µØÖ·µÍ×Ö½Ú
-						size Êı¾İ´óĞ¡(µ¥Î»£º×Ö/Á½×Ö½Ú/16Î»)
+* @brief	:	å‘é€ä»è¿ªæ–‡å±è¯»æ•°æ®çš„æŒ‡ä»¤
+* @param	: addr_h å˜é‡åœ°å€é«˜å­—èŠ‚
+						addr_l å˜é‡åœ°å€ä½å­—èŠ‚
+						size æ•°æ®å¤§å°(å•ä½ï¼šå­—/ä¸¤å­—èŠ‚/16ä½)
 * @retval	:
 ************************************************************************************/
 void read_from_dwin(u8 addr_h, u8 addr_l, u8 size)
 {
-    u8 read_cmd[7] = {0x5A, 0xA5, 0x04, 0x83, addr_h, addr_l, size};
-    sendArray(read_cmd, sizeof(read_cmd));
+#if CRC16_ENABLE
+    u8 cmd[9] = {0x5A, 0xA5, 0x06, 0x83, addr_h, addr_l, size, 0, 0};
+    u16 crc = CRC16_Check(cmd, cmd[2] - 2);
+    cmd[sizeof(cmd) - 2] = (crc >> 8);
+    cmd[sizeof(cmd) - 1] = crc & 0xff;
+    sendArray(cmd, sizeof(cmd));
+
+#elseif
+
+    u8 cmd[7] = {0x5A, 0xA5, 0x04, 0x83, addr_h, addr_l, size};
+    sendArray(cmd, sizeof(cmd));
+
+#endif
 }
 
 void read_u8_from_dwin(u16 addr)
@@ -160,39 +206,52 @@ void read_float_from_dwin(u16 addr)
 
 /************************************************************************************
 * @name		:	page_read
-* @brief	:	¶ÁÈ¡µ±Ç°Ò³Ãæ¡ª¡ªÖ¸ÁîÊ¾Àı£º¶Á£º5A A5 04 83 0014 01 Ó¦´ğ£º5A A5 06 83 00 14 01 00 07(0007 Îª 07 ºÅÒ³Ãæ)
+* @brief	:	è¯»å–å½“å‰é¡µé¢â€”â€”æŒ‡ä»¤ç¤ºä¾‹ï¼šè¯»ï¼š5A A5 04 83 0014 01 åº”ç­”ï¼š5A A5 06 83 00 14 01 00 07(0007 ä¸º 07 å·é¡µé¢)
 * @param	:
-* @retval	: 	Ò³ÃæID
+* @retval	: 	é¡µé¢ID
 ************************************************************************************/
 void page_read(void)
 {
-   read_u8_from_dwin(0x0014);
+    read_u8_from_dwin(0x0014);
 }
 /************************************************************************************
 * @name		:	page_change
-* @brief	:	Ò³ÃæÇĞ»»Ö¸Áî¡ª¡ªÖ¸ÁîÊ¾Àı£ºĞ´: 5A A5 07 82 0084 5A01 0001,ÏÔÊ¾±³¾°Í¼Æ¬ ICL ÎÄ¼şÏÂµÄ 01 ĞòºÅÍ¼Æ¬
-* @param	: 	page_id Ò³ÃæID
+* @brief	:	é¡µé¢åˆ‡æ¢æŒ‡ä»¤â€”â€”æŒ‡ä»¤ç¤ºä¾‹ï¼šå†™: 5A A5 07 82 0084 5A01 0001,æ˜¾ç¤ºèƒŒæ™¯å›¾ç‰‡ ICL æ–‡ä»¶ä¸‹çš„ 01 åºå·å›¾ç‰‡
+* @param	: 	page_id é¡µé¢ID
 * @retval	:
 ************************************************************************************/
 void page_change(u8 page_id)
 {
+#if CRC16_ENABLE
+    u8 cmd[12] = {0x5A, 0xA5, 0x09, 0x82, 0x00, 0x84, 0x5A, 0x01, 0x00, page_id, 0, 0};
+    u16 crc = CRC16_Check(cmd, cmd[2] - 2);
+    cmd[sizeof(cmd) - 2] = (crc >> 8);
+    cmd[sizeof(cmd) - 1] = crc & 0xff;
+    sendArray(cmd, sizeof(cmd));
+
+#elseif
+
     u8 cmd[10] = {0x5A, 0xA5, 0x07, 0x82, 0x00, 0x84, 0x5A, 0x01, 0x00, page_id};
     sendArray(cmd, sizeof(cmd));
+
+#endif
+
+
 }
 
 /*!
-*  \brief  ÏûÏ¢´¦ÀíÁ÷³Ì
-*  \param msg ´ı´¦ÀíÏûÏ¢
-*  \param size ÏûÏ¢³¤¶È
+*  \brief  æ¶ˆæ¯å¤„ç†æµç¨‹
+*  \param msg å¾…å¤„ç†æ¶ˆæ¯
+*  \param size æ¶ˆæ¯é•¿åº¦
 */
 void ProcessMessage(CTRL_MSG *msg)
 {
     static u8 Flag = 0;
 
-    u8 cmd_type = msg->cmd_type;                 	//ÃüÁîÀàĞÍ(0x83)
-    u8 addr_h   = msg->addr_h;										//±äÁ¿¸ßµØÖ·
-    u8 addr_l   = msg->addr_l;										//±äÁ¿µÍµØÖ·
-    u8 data_len = msg->data_len;									//Êı¾İ³¤¶È
+    u8 cmd_type = msg->cmd_type;                 	//å‘½ä»¤ç±»å‹(0x83)
+    u8 addr_h   = msg->addr_h;										//å˜é‡é«˜åœ°å€
+    u8 addr_l   = msg->addr_l;										//å˜é‡ä½åœ°å€
+    u8 data_len = msg->data_len;									//æ•°æ®é•¿åº¦
 
     u16 addr = (addr_h << 8) + (addr_l);
 
@@ -228,7 +287,7 @@ void ProcessMessage(CTRL_MSG *msg)
     {
     case TEST_BTN_ADDR:
 
-        //´¥ÃşÆÁ°´ÏÂ
+        //è§¦æ‘¸å±æŒ‰ä¸‹
         printf("recv over\r\n");
 
         if(Flag)
@@ -254,15 +313,15 @@ void ProcessMessage(CTRL_MSG *msg)
 }
 
 /*!
-*  \brief  Íâ²¿³ÌĞòÖÜÆÚµ÷ÓÃ
+*  \brief  å¤–éƒ¨ç¨‹åºå‘¨æœŸè°ƒç”¨
 */
 void dwin_ack(void)
 {
     u16  size = 0;
-    size = queue_find_cmd(cmd_buffer, CMD_MAX_SIZE);                             //´Ó»º³åÇøÖĞ»ñÈ¡Ò»ÌõÖ¸Áî
-    if(size > 0)                                   //½ÓÊÕµ½Ö¸Áî
+    size = queue_find_cmd(cmd_buffer, CMD_MAX_SIZE);                             //ä»ç¼“å†²åŒºä¸­è·å–ä¸€æ¡æŒ‡ä»¤
+    if(size > 0)                                   //æ¥æ”¶åˆ°æŒ‡ä»¤
     {
-        ProcessMessage((CTRL_MSG*)cmd_buffer);                             //Ö¸Áî´¦Àí
+        ProcessMessage((CTRL_MSG*)cmd_buffer);                             //æŒ‡ä»¤å¤„ç†
     }
 }
 
